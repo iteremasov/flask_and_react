@@ -1,0 +1,6 @@
+.idea/
+/backend/venv/
+/backend/migrations/
+/comands
+/backend/__pycache__/
+/backend/app/__pycache__/
