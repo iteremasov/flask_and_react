@@ -1,25 +1,49 @@
-import React, { useState }from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-// import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { fetchPost } from '../api/services';
 
+
+const useStyles = makeStyles((theme) => ({
+    
+    fail: {
+      color: 'red'
+    },
+    succes: {
+        color: 'green'
+    }
+  }));
+
+
 export function AddForm() {
+    const classes = useStyles()
 
     const [surname, setSurname] = useState('')
-    const [name, setNme] = useState('')
+    const [name, setName] = useState('')
     const [patronymic, setPatronymic] = useState('')
     const [phone, setPhone] = useState('')
     const [adress, setAdress] = useState('')
     const [iin, setIin] = useState('')
 
+    const [success, setSuccess] = useState(false)
+    const [fail, setFail] = useState(false)
+
+    const [surnameFail, setSurnameFail] = useState(false)
+    const [nameFail, setNameFail] = useState(false)
+    const [patronymicFail, setPatronymicFail] = useState(false)
+    const [phoneFail, setPhoneFail] = useState(false)
+    const [adressFail, setAdressFail] = useState(false)
+    const [iinFail, setIinFail] = useState(false)
+
+
     const changeSurname = (e) => {
         setSurname(e.target.value)
     }
     const changeName = (e) => {
-        setNme(e.target.value)
+        setName(e.target.value)
     }
     const changePatronymic = (e) => {
         setPatronymic(e.target.value)
@@ -30,12 +54,34 @@ export function AddForm() {
     const changeAdres = (e) => {
         setAdress(e.target.value)
     }
-    const changeIin = (e)=> {
+    const changeIin = (e) => {
         setIin(e.target.value)
+    }
+    const checkData = () => {
+        let result = true
+        if (surname === '') {setSurnameFail(true);result = false}
+        if (name === '') {setNameFail(true);result = false}
+        if (patronymic === '') { setPatronymicFail(true);result = false}
+        if (phone === '') {setPhoneFail(true);result = false}
+        if (adress === '') {setAdressFail(true);result = false}
+        if (iin === '') {setIinFail(true);result = false}
+        return result
+    }
+
+    const setDefaultFail = () => {
+        setSurnameFail(false)
+        setNameFail(false)
+        setPatronymicFail(false)
+        setPhoneFail(false)
+        setAdressFail(false)
+        setIinFail(false)
     }
 
 
     const clickForm = () => {
+        const check = checkData()
+        if(!check) return
+
         const body = {
             surname,
             name,
@@ -47,19 +93,34 @@ export function AddForm() {
         }
         fetchPost({
             url: process.env.REACT_APP_SERVER_URL + 'add',
-            body: JSON.stringify(body)}
-             )
-             .then(response => {
-                 if (response.status !== 200){
-                     console.log('fail')
-                 }
-             })
+            body: JSON.stringify(body)
+        }
+        )
+            .then(response => {
+                if (response.status === 200) {
+                    clearForm()
+                    setSuccess(true)
+                    setFail(false)
+                    setDefaultFail()
+                }else {
+                    setSuccess(false)
+                    setFail(true)
+                }
+            })
+    }
+    const clearForm = () => {
+        setAdress('')
+        setIin('')  
+        setName('')
+        setPatronymic('')
+        setSurname('')
+        setPhone('')
     }
     return (
         <Container component="main" maxWidth="xs">
             <div>
                 <Typography component="h1" variant="h5">
-                    Add your data
+                    Заполните форму
                 </Typography>
                 <div>
                     <TextField
@@ -71,7 +132,9 @@ export function AddForm() {
                         label="Фамилия"
                         name="Фамилия"
                         autoFocus
-                    onChange={changeSurname}
+                        value={surname}
+                        onChange={changeSurname}
+                        error={surnameFail}
                     />
                     <TextField
                         variant="outlined"
@@ -82,7 +145,9 @@ export function AddForm() {
                         label="Имя"
                         type="text"
                         id="name"
-                    onChange={changeName}
+                        value={name}
+                        onChange={changeName}
+                        error={nameFail}
                     />
                     <TextField
                         variant="outlined"
@@ -93,7 +158,9 @@ export function AddForm() {
                         label="Отчество"
                         type="text"
                         id="patronymic"
-                    onChange={changePatronymic}
+                        value={patronymic}
+                        onChange={changePatronymic}
+                        error={patronymicFail}
                     />
                     <TextField
                         variant="outlined"
@@ -104,7 +171,9 @@ export function AddForm() {
                         label="Телефон"
                         type="text"
                         id="phone"
-                    onChange={changePhone}
+                        value={phone}
+                        onChange={changePhone}
+                        error={phoneFail}
                     />
                     <TextField
                         variant="outlined"
@@ -115,7 +184,9 @@ export function AddForm() {
                         label="Адрес"
                         type="text"
                         id="adres"
-                    onChange={changeAdres}
+                        value={adress}
+                        onChange={changeAdres}
+                        error={adressFail}
                     />
                     <TextField
                         variant="outlined"
@@ -126,14 +197,23 @@ export function AddForm() {
                         label="ИИН"
                         type="text"
                         id="iin"
-                    onChange={changeIin}
+                        value={iin}
+                        onChange={changeIin}
+                        error={iinFail}
                     />
+                    {fail && <Typography component="h6" className={classes.fail}>
+                        fail
+                    </Typography>
+                    }
+                    {success && <Typography component="h6" className={classes.succes}>
+                        success
+                    </Typography>
+                    }
                     <Button
                         fullWidth
                         variant="contained"
                         color="primary"
-                        // className={classes.submit}
-                    onClick={clickForm}
+                        onClick={clickForm}
                     >
                         Отправить
                     </Button>

@@ -11,6 +11,8 @@ from flask_jwt_extended import (
 import json
 import os
 from dotenv import load_dotenv
+
+
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
@@ -20,7 +22,7 @@ free_blueprint = Blueprint('free_blueprint', __name__)
 closed_blueprint = Blueprint('closed_blueprint', __name__)
 
 app = Flask(__name__)
-app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
+app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY')
 jwt = JWTManager(app)
 
 
@@ -30,7 +32,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 
-@free_blueprint.after_request # blueprint can also be app~~
+@free_blueprint.after_request
 def after_request(response):
     header = response.headers
     header['Access-Control-Allow-Origin'] = '*'
@@ -38,20 +40,20 @@ def after_request(response):
     return response
 
 
-@closed_blueprint.after_request # blueprint can also be app~~
+@closed_blueprint.after_request
 def after_request_admin(response):
     header = response.headers
     header['Access-Control-Allow-Origin'] = '*'
     header['Access-Control-Allow-Headers'] = '*'
     return response
 
+
 @closed_blueprint.before_request
 @jwt_required
 def check_token():
- pass
+    pass
 
 
-# cipher_key = b'fXFzR5jZAHz1VoJ8RKYJSB_1G5WR4l0W4fgpE_Gnzz4='
 cipher_key = os.environ.get('CIPHER_KEY').encode()
 cipher = Fernet(cipher_key)
 

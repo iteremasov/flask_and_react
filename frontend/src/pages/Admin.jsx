@@ -16,7 +16,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export function Admin() {
+export function Admin(props, ctx) {
+    console.log(props, ctx)
     const classes = useStyles();
     const [users, setUsers] = useState([])
     const [loading, setLoading] = useState(true)
@@ -31,6 +32,12 @@ export function Admin() {
                 if (response.status === 401) {
                     localStorage.removeItem('token')
                     window.location.replace('/login')
+                    return
+                }
+                if (response.status === 422) {
+                    localStorage.removeItem('token')
+                    window.location.replace('/login')
+                    return
                 }
                 if (response.status === 200) {
                     return response.json()
@@ -39,6 +46,9 @@ export function Admin() {
             .then(response => {
                   setLoading(false)
                 setUsers(response.users)
+            })
+            .catch(() =>{
+                return
             })
     }, []);
 

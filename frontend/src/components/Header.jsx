@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -29,32 +30,24 @@ const useStyles = makeStyles((theme) => ({
 function HeaderComponent({ location }) {
   const classes = useStyles();
 
-  const logOut = () => {
-    // localStorage.removeItem('token')
-    window.location.replace('/login')
-  }
-  const inHome = () => {
-    window.location.replace('/')
-  }
 
   return (
-    <div className={ classes.root }>
+    <div className={classes.root}>
       <AppBar position="static">
         <Container maxWidth="lg">
           <Toolbar>
-            <Typography className={ classes.title } variant="h6" noWrap>
-            <Button
-            onClick={inHome}
-            >
-              Registration on the service
+            <Typography className={classes.title} variant="h6" noWrap>
+              <Button
+              >
+                <Link to='/'>
+                Registration on the service
+                </Link>
             </ Button>
-              
+
             </Typography>
-            <Button
-            onClick={logOut}
-            >
-              admin panel
-            </ Button>
+            <Link to='/login'>
+              ADMIN PANEL
+            </Link>
 
           </Toolbar>
         </Container>

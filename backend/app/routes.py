@@ -28,7 +28,6 @@ def login():
 
 @closed_blueprint.route('/users', methods=['GET'])
 def admin():
-    print('/admin')
     result = controllers.admin()
     if result['success']:
         return app.response_class(status=200, response=json.dumps({'users': result['users']}))
@@ -36,7 +35,5 @@ def admin():
         return app.response_class(status=501)
 
 
-app.register_blueprint(free_blueprint, url_prefix='/api')
-app.register_blueprint(closed_blueprint, url_prefix='/api/admin')
-
-print(app.url_map)
+app.register_blueprint(free_blueprint, url_prefix='/api/1.0')
+app.register_blueprint(closed_blueprint, url_prefix='/api/1.0/admin')
